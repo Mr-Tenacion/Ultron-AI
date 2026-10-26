@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050b14">
+<title>ULTRON • Personal Assistant</title>
+<style>
+:root{--bg:#050b14;--panel:#0b1726;--line:#17344b;--cyan:#48e7ff;--blue:#528dff;--text:#eaf7ff;--muted:#91a9bb;--danger:#ff6b78}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 10%,#102941 0%,var(--bg) 55%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.app{max-width:760px;margin:auto;padding:18px 15px 30px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-weight:900;letter-spacing:.22em;color:var(--cyan);font-size:20px}.status{font-size:12px;color:#80f5c5}.status:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#80f5c5;margin-right:7px;box-shadow:0 0 10px #80f5c5}
+.hero{text-align:center;padding:25px 0 18px}.orb{width:156px;height:156px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;border:1px solid #2e9bb7;box-shadow:0 0 25px #00cfff26,inset 0 0 24px #00cfff1c;position:relative;background:radial-gradient(circle,#13344b 0%,#071421 68%)}.orb:before,.orb:after{content:"";position:absolute;inset:9px;border-radius:50%;border:2px dashed #42dfff80;animation:spin 18s linear infinite}.orb:after{inset:-7px;border:1px solid #28617a;animation:spin 25s linear infinite reverse}.orb span{font-size:45px;color:var(--cyan);text-shadow:0 0 24px #48e7ff}.orb.listening{animation:pulse 1.1s infinite}.hero h1{font-size:23px;margin:0 0 5px}.hero p{margin:0;color:var(--muted);font-size:13px}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{box-shadow:0 0 38px #48e7ff70,inset 0 0 30px #48e7ff35}}
+.panel{background:#0a1624dd;border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #0002}.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.grow{flex:1}label{display:block;color:var(--muted);font-size:12px;margin:0 0 7px}select,input,button,textarea{font:inherit}select,input,textarea{background:#06111d;border:1px solid #254158;border-radius:12px;color:var(--text);padding:12px;width:100%;outline:none}button{border:1px solid #28617b;background:#10273a;color:var(--text);border-radius:12px;padding:12px 14px;font-weight:650;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:linear-gradient(135deg,#1b9fc0,#3564d7);border:0;color:white}button:disabled{opacity:.45;cursor:not-allowed}.controls{display:grid;grid-template-columns:1fr 1fr;gap:9px}.small{font-size:12px;color:var(--muted);line-height:1.5}.chat{height:230px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:3px}.bubble{max-width:88%;padding:11px 13px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.45}.bot{align-self:flex-start;background:#10263a;border:1px solid #1e455c}.user{align-self:flex-end;background:#153d60;border:1px solid #28638a}.tag{font-size:10px;letter-spacing:.12em;color:var(--cyan);margin-bottom:4px}.compose{display:flex;gap:8px;margin-top:10px}.compose input{flex:1}.compose button{padding-inline:15px}.quick{display:flex;flex-wrap:wrap;gap:8px}.quick button{font-size:12px;padding:9px 11px}.notice{padding:10px 12px;border-radius:12px;background:#1b1820;border:1px solid #56404a;color:#ffd5dc;font-size:12px;line-height:1.5}.foot{text-align:center;color:#647f94;font-size:11px;margin-top:20px}
+@media(min-width:600px){.hero{padding-top:35px}.orb{width:174px;height:174px}}
+</style>
+</head>
+<body><main class="app">
+  <header class="top"><div class="brand">ULTRON<span style="color:#fff"> / AI</span></div><div class="status" id="status">SYSTEM READY</div></header>
+  <section class="hero"><div class="orb" id="orb"><span>◉</span></div><h1>Your personal assistant</h1><p>Voice • Chat • Android actions</p></section>
+  <section class="panel">
+    <div class="row">
+      <div class="grow"><label for="language">VOICE LANGUAGE</label><select id="language"><option value="en-IN">English (India)</option><option value="te-IN">తెలుగు (Telugu)</option><option value="en-US">English (US)</option></select></div>
+      <div class="grow"><label for="voiceReply">SPOKEN REPLIES</label><select id="voiceReply"><option value="on">On</option><option value="off">Off</option></select></div>
+    </div>
+    <div class="controls" style="margin-top:12px"><button class="primary" id="listenBtn">🎙 Start listening</button><button id="stopBtn">■ Stop voice</button></div>
+    <p class="small" id="voiceHelp">Tap Start listening and allow microphone access. Speech recognition depends on your browser/WebView and may require internet.</p>
+  </section>
+  <section class="panel"><div class="tag">CONVERSATION</div><div class="chat" id="chat" aria-live="polite"><div class="bubble bot">Hello! I’m ULTRON. You can type or speak in English or Telugu. Try “What can you do?” or “Open YouTube”.</div></div>
+    <div class="compose"><input id="message" placeholder="Type a command…" autocomplete="off"><button class="primary" id="sendBtn">Send</button></div>
+  </section>
+  <section class="panel"><div class="tag">QUICK COMMANDS</div><div class="quick">
+    <button data-cmd="What can you do?">Help</button><button data-cmd="Open YouTube">Open YouTube</button><button data-cmd="Open settings">Settings</button><button data-cmd="Turn on torch">Torch on</button><button data-cmd="Turn off torch">Torch off</button><button data-cmd="What time is it?">Time</button>
+  </div></section>
+  <section class="panel"><div class="tag">ANDROID CONNECTION</div><div class="small" id="bridgeState">Checking native Android bridge…</div><p class="small">HTML alone cannot control system settings, torch, calls, or other apps reliably. Those actions need an Android WebView bridge with explicit permissions.</p></section>
+  <div class="notice">Privacy: voice recognition may send audio to the speech service provided by your browser/device. Do not use this demo for passwords, OTPs, or sensitive information.</div>
+  <div class="foot">ULTRON • Local interface demo • Not an official Marvel product</div>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const chat = $('chat'), status = $('status'), orb = $('orb');
+  let recognition = null, listening = false;
+  const native = () => window.AndroidAssistant || null;
+  $('bridgeState').textContent = native() ? 'Native Android bridge detected.' : 'Browser mode: native Android bridge not detected.';
+  function addBubble(text, who='bot') {
+    const div=document.createElement('div'); div.className='bubble '+who; div.textContent=text; chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
+  }
+  function setStatus(s){status.textContent=s.toUpperCase();}
+  function speak(text){
+    if($('voiceReply').value!=='on' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text); u.lang=$('language').value;
+    const voices=window.speechSynthesis.getVoices();
+    const match=voices.find(v=>v.lang.toLowerCase()===u.lang.toLowerCase()) || voices.find(v=>v.lang.toLowerCase().startsWith(u.lang.slice(0,2)));
+    if(match) u.voice=match;
+    window.speechSynthesis.speak(u);
+  }
+  function reply(text){addBubble(text,'bot');speak(text);setStatus('Ready');}
+  function nativeAction(action, value){
+    const bridge=native();
+    if(!bridge) return false;
+    try {
+      if(action==='open_app' && typeof bridge.openApp==='function'){bridge.openApp(value);return true;}
+      if(action==='torch' && typeof bridge.setTorch==='function'){bridge.setTorch(value==='on');return true;}
+      if(action==='settings' && typeof bridge.openSettings==='function'){bridge.openSettings();return true;}
+    } catch(e){ reply('Android action failed: '+(e.message||'native error')); return true; }
+    return false;
+  }
+  function handle(text){
+    const t=text.trim(); if(!t) return;
+    addBubble(t,'user'); $('message').value='';
+    const low=t.toLowerCase();
+    if(/what can you do|help|ఏం చేయగలవు|సహాయం/.test(low)){
+      reply('I can chat, speak English or Telugu, tell the time, and request supported Android actions. Real phone controls require the native Android bridge and permissions.'); return;
+    }
+    if(/what time|time is it|సమయం/.test(low)){
+      const now=new Date(); reply('The time is '+now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'.'); return;
+    }
+    if(/torch|flashlight|టార్చ్/.test(low)){
+      const on=!/off|turn off|ఆఫ్/.test(low);
+      if(nativeAction('torch',on?'on':'off')) reply('Torch command sent to Android.');
+      else reply('Torch control is not connected in browser mode. Add the Android native bridge and camera permission to enable it.');
+      return;
+    }
+    if(/open youtube|youtube/.test(low)){
+      if(nativeAction('open_app','youtube')) reply('Open YouTube command sent to Android.');
+      else reply('I heard “Open YouTube”. To launch apps, package this page in an Android WebView and implement the openApp bridge method.');
+      return;
+    }
+    if(/open settings|settings/.test(low)){
+      if(nativeAction('settings')) reply('Settings command sent to Android.');
+      else reply('Android Settings requires a native bridge. This browser-only version cannot open system settings directly.');
+      return;
+    }
+    if(/హలో|నమస్కారం/.test(t)){reply('నమస్కారం! నేను ULTRON. మీకు ఎలా సహాయం చేయగలను?');return;}
+    setStatus('Thinking');
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: t, language: $('language').value })
+    })
+    .then(async response => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Request failed (' + response.status + ')');
+      reply(data.reply || 'I could not generate a response. Please try again.');
+    })
+    .catch(error => reply('ULTRON AI connection error: ' + error.message + '. Make sure the backend is running and you opened ULTRON through its server URL.'));
+  }
+  function startListening(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){reply('Speech recognition is not supported by this browser or Android WebView. Try Chrome, use text input, or add a native Android speech recognizer.');return;}
+    if(recognition){try{recognition.stop()}catch(e){}}
+    recognition=new SR(); recognition.lang=$('language').value; recognition.continuous=false; recognition.interimResults=true; recognition.maxAlternatives=1;
+    recognition.onstart=()=>{listening=true;orb.classList.add('listening');setStatus('Listening');$('listenBtn').textContent='🎙 Listening…';};
+    recognition.onresult=e=>{let finalText='';let interim='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalText+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;} $('voiceHelp').textContent=interim?'Hearing: '+interim:'Speech detected…';if(finalText)handle(finalText);};
+    recognition.onerror=e=>{const msgs={ 'not-allowed':'Microphone permission denied. Allow microphone access in browser/app settings.', 'service-not-allowed':'Speech service is blocked. Try Chrome or native Android speech recognition.', 'network':'Speech recognition network error. Check internet or use text input.', 'no-speech':'No speech detected. Try again closer to the microphone.', 'audio-capture':'No microphone available.'};reply(msgs[e.error]||('Speech recognition error: '+e.error));};
+    recognition.onend=()=>{listening=false;orb.classList.remove('listening');$('listenBtn').textContent='🎙 Start listening';if(status.textContent==='LISTENING')setStatus('Ready');};
+    try{recognition.start()}catch(e){reply('Could not start microphone: '+e.message);}
+  }
+  $('listenBtn').addEventListener('click',startListening);
+  $('stopBtn').addEventListener('click',()=>{if(recognition)try{recognition.stop()}catch(e){};if('speechSynthesis'in window)window.speechSynthesis.cancel();listening=false;orb.classList.remove('listening');$('listenBtn').textContent='🎙 Start listening';setStatus('Ready');});
+  $('sendBtn').addEventListener('click',()=>handle($('message').value));
+  $('message').addEventListener('keydown',e=>{if(e.key==='Enter')handle($('message').value)});
+  document.querySelectorAll('[data-cmd]').forEach(b=>b.addEventListener('click',()=>handle(b.dataset.cmd)));
+  $('language').addEventListener('change',()=>{if(listening&&recognition)try{recognition.stop()}catch(e){};$('voiceHelp').textContent='Language set to '+$('language').selectedOptions[0].text+'. Tap Start listening again.';});
+  if('speechSynthesis'in window)window.speechSynthesis.onvoiceschanged=()=>{};
+})();
+</script></body></html>
